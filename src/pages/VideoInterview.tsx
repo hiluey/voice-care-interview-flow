@@ -2,38 +2,17 @@
 import React, { useState } from 'react';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
-import { Checkbox } from '@/components/ui/checkbox';
 import { Textarea } from '@/components/ui/textarea';
-import { RadioGroup, RadioGroupItem } from '@/components/ui/radio-group';
 import { Label } from '@/components/ui/label';
 import { Video, VideoOff, Mic, MicOff, PhoneOff } from 'lucide-react';
 import { useNavigate } from 'react-router-dom';
+import { ScrollArea } from '@/components/ui/scroll-area';
 
 const VideoInterview = () => {
   const navigate = useNavigate();
   const [videoEnabled, setVideoEnabled] = useState(true);
   const [audioEnabled, setAudioEnabled] = useState(true);
   const [formData, setFormData] = useState({
-    mobilityAssistance: '',
-    communicationAssistance: '',
-    complexDiseases: [] as string[],
-    vascularDiseases: [] as string[],
-    heartDiseases: [] as string[],
-    endocrineDiseases: [] as string[],
-    gastrointestinalDiseases: [] as string[],
-    herniaDiseases: [] as string[],
-    intestinalDiseases: [] as string[],
-    renalDiseases: [] as string[],
-    neurologicalDiseases: [] as string[],
-    orthopedicDiseases: [] as string[],
-    gynecologicalDiseases: [] as string[],
-    bloodDiseases: [] as string[],
-    cancerDiseases: [] as string[],
-    ophthalmologicalDiseases: [] as string[],
-    infectiousDiseases: [] as string[],
-    dialysisDiseases: [] as string[],
-    hasObesity: '',
-    hasProsthetics: '',
     observations: '',
     additionalInfo: ''
   });
@@ -101,35 +80,17 @@ const VideoInterview = () => {
     ]
   };
 
-  const handleDiseaseChange = (category: string, disease: string, checked: boolean) => {
-    setFormData(prev => ({
-      ...prev,
-      [category]: checked 
-        ? [...prev[category as keyof typeof prev] as string[], disease]
-        : (prev[category as keyof typeof prev] as string[]).filter(d => d !== disease)
-    }));
-  };
-
   const handleCompleteAssessment = () => {
     navigate('/assessment-complete');
   };
 
-  const renderDiseaseCategory = (categoryKey: string, categoryTitle: string, diseases: string[]) => (
+  const renderDiseaseCategory = (categoryTitle: string, diseases: string[]) => (
     <div className="mb-6">
       <h4 className="font-semibold text-sm mb-3 text-gray-700">{categoryTitle}</h4>
-      <div className="space-y-2">
+      <div className="space-y-1">
         {diseases.map((disease) => (
-          <div key={disease} className="flex items-center space-x-2">
-            <Checkbox
-              id={`${categoryKey}-${disease}`}
-              checked={(formData[categoryKey as keyof typeof formData] as string[]).includes(disease)}
-              onCheckedChange={(checked) => 
-                handleDiseaseChange(categoryKey, disease, checked as boolean)
-              }
-            />
-            <Label htmlFor={`${categoryKey}-${disease}`} className="text-sm">
-              {disease}
-            </Label>
+          <div key={disease} className="text-sm text-gray-600">
+            {disease}
           </div>
         ))}
       </div>
@@ -137,159 +98,105 @@ const VideoInterview = () => {
   );
 
   return (
-    <div className="min-h-screen bg-gray-50 flex">
+    <div className="min-h-screen bg-gray-50 flex overflow-hidden">
       {/* Left Panel - Assessment Form */}
       <div className="w-96 bg-white border-r border-gray-200 flex flex-col">
-        <div className="p-4 border-b border-gray-200">
+        <div className="p-4 border-b border-gray-200 flex-shrink-0">
           <h2 className="text-lg font-semibold text-gray-800">Avaliação de Saúde</h2>
           <p className="text-sm text-gray-600">PEC Fast - Entrevista</p>
         </div>
         
-        <div className="flex-1 overflow-y-auto p-4 space-y-6">
-          {/* Mobilidade */}
-          <Card>
-            <CardHeader className="pb-3">
-              <CardTitle className="text-sm">1. Mobilidade</CardTitle>
-            </CardHeader>
-            <CardContent className="space-y-4">
-              <div>
-                <p className="text-sm mb-2">Você ou seu familiar perceberam que o sr(a) apresentou piora para locomover-se ou movimentar-se a ponto de impactar nas atividades cotidianas?</p>
-                <RadioGroup 
-                  value={formData.mobilityAssistance} 
-                  onValueChange={(value) => setFormData(prev => ({...prev, mobilityAssistance: value}))}
-                >
-                  <div className="flex items-center space-x-2">
-                    <RadioGroupItem value="sim" id="mobility-sim" />
-                    <Label htmlFor="mobility-sim" className="text-sm">Sim</Label>
-                  </div>
-                  <div className="flex items-center space-x-2">
-                    <RadioGroupItem value="nao" id="mobility-nao" />
-                    <Label htmlFor="mobility-nao" className="text-sm">Não</Label>
-                  </div>
-                </RadioGroup>
+        <ScrollArea className="flex-1">
+          <div className="p-4 space-y-6">
+            {/* Mobilidade */}
+            <Card>
+              <CardHeader className="pb-3">
+                <CardTitle className="text-sm">1. Mobilidade</CardTitle>
+              </CardHeader>
+              <CardContent className="space-y-4">
+                <div>
+                  <p className="text-sm mb-2">Você ou seu familiar perceberam que o sr(a) apresentou piora para locomover-se ou movimentar-se a ponto de impactar nas atividades cotidianas?</p>
+                  <p className="text-sm mt-3 mb-2">1.1 Necessita de auxílio para as atividades?</p>
+                  <p className="text-sm mb-2">1.2 Apresenta dificuldade para sustentação do tronco ou está acamado?</p>
+                </div>
+              </CardContent>
+            </Card>
+
+            {/* Cognitiva */}
+            <Card>
+              <CardHeader className="pb-3">
+                <CardTitle className="text-sm">2. Cognitiva</CardTitle>
+              </CardHeader>
+              <CardContent>
+                <div>
+                  <p className="text-sm mb-2">Você ou seu familiar perceberam que o sr(a) apresentou piora para se comunicar ou interagir com outras pessoas nos últimos meses?</p>
+                  <p className="text-sm mt-3">2.1 Necessita de auxílio para ser compreendido?</p>
+                </div>
+              </CardContent>
+            </Card>
+
+            {/* Comorbidades */}
+            <Card>
+              <CardHeader className="pb-3">
+                <CardTitle className="text-sm">3. Comorbidades</CardTitle>
+              </CardHeader>
+              <CardContent>
+                <p className="text-sm mb-4">Quais doenças o sr(a) sabe que tem, confirmada por um médico?</p>
                 
-                <p className="text-sm mt-3 mb-2">1.1 Necessita de auxílio para as atividades?</p>
-                <p className="text-sm mb-2">1.2 Apresenta dificuldade para sustentação do tronco ou está acamado?</p>
-              </div>
-            </CardContent>
-          </Card>
+                {renderDiseaseCategory('Grupo 1 - Complexas', diseaseCategories.complexDiseases)}
+                {renderDiseaseCategory('Doenças de Veias e Artérias', diseaseCategories.vascularDiseases)}
+                {renderDiseaseCategory('Doenças do Coração', diseaseCategories.heartDiseases)}
+                {renderDiseaseCategory('Glândulas (Tireoide)', diseaseCategories.endocrineDiseases)}
+                {renderDiseaseCategory('Trato Gastrointestinal', diseaseCategories.gastrointestinalDiseases)}
+                {renderDiseaseCategory('Hérnia', diseaseCategories.herniaDiseases)}
+                {renderDiseaseCategory('Intestino', diseaseCategories.intestinalDiseases)}
+                {renderDiseaseCategory('Renal ou Urinário', diseaseCategories.renalDiseases)}
+                {renderDiseaseCategory('Neurológica ou Psiquiátrica', diseaseCategories.neurologicalDiseases)}
+                {renderDiseaseCategory('Ortopédica ou Reumatológica', diseaseCategories.orthopedicDiseases)}
+                {renderDiseaseCategory('Ginecológica ou Mamária', diseaseCategories.gynecologicalDiseases)}
+                {renderDiseaseCategory('Doenças do Sangue', diseaseCategories.bloodDiseases)}
+                {renderDiseaseCategory('Câncer', diseaseCategories.cancerDiseases)}
+                {renderDiseaseCategory('Doenças Oftalmológicas', diseaseCategories.ophthalmologicalDiseases)}
+                {renderDiseaseCategory('Hepatite e AIDS', diseaseCategories.infectiousDiseases)}
+                {renderDiseaseCategory('Insuficiência Renal ou Diálise', diseaseCategories.dialysisDiseases)}
 
-          {/* Cognitiva */}
-          <Card>
-            <CardHeader className="pb-3">
-              <CardTitle className="text-sm">2. Cognitiva</CardTitle>
-            </CardHeader>
-            <CardContent>
-              <div>
-                <p className="text-sm mb-2">Você ou seu familiar perceberam que o sr(a) apresentou piora para se comunicar ou interagir com outras pessoas nos últimos meses?</p>
-                <RadioGroup 
-                  value={formData.communicationAssistance} 
-                  onValueChange={(value) => setFormData(prev => ({...prev, communicationAssistance: value}))}
-                >
-                  <div className="flex items-center space-x-2">
-                    <RadioGroupItem value="sim" id="comm-sim" />
-                    <Label htmlFor="comm-sim" className="text-sm">Sim</Label>
+                <div className="mt-6 space-y-4">
+                  <div>
+                    <Label className="text-sm font-medium">Tem obesidade?</Label>
                   </div>
-                  <div className="flex items-center space-x-2">
-                    <RadioGroupItem value="nao" id="comm-nao" />
-                    <Label htmlFor="comm-nao" className="text-sm">Não</Label>
+
+                  <div>
+                    <Label className="text-sm font-medium">Tem órtese ou prótese?</Label>
                   </div>
-                </RadioGroup>
-                
-                <p className="text-sm mt-3">2.1 Necessita de auxílio para ser compreendido?</p>
-              </div>
-            </CardContent>
-          </Card>
 
-          {/* Comorbidades */}
-          <Card>
-            <CardHeader className="pb-3">
-              <CardTitle className="text-sm">3. Comorbidades</CardTitle>
-            </CardHeader>
-            <CardContent>
-              <p className="text-sm mb-4">Quais doenças o sr(a) sabe que tem, confirmada por um médico?</p>
-              
-              {renderDiseaseCategory('complexDiseases', 'Grupo 1 - Complexas', diseaseCategories.complexDiseases)}
-              {renderDiseaseCategory('vascularDiseases', 'Doenças de Veias e Artérias', diseaseCategories.vascularDiseases)}
-              {renderDiseaseCategory('heartDiseases', 'Doenças do Coração', diseaseCategories.heartDiseases)}
-              {renderDiseaseCategory('endocrineDiseases', 'Glândulas (Tireoide)', diseaseCategories.endocrineDiseases)}
-              {renderDiseaseCategory('gastrointestinalDiseases', 'Trato Gastrointestinal', diseaseCategories.gastrointestinalDiseases)}
-              {renderDiseaseCategory('herniaDiseases', 'Hérnia', diseaseCategories.herniaDiseases)}
-              {renderDiseaseCategory('intestinalDiseases', 'Intestino', diseaseCategories.intestinalDiseases)}
-              {renderDiseaseCategory('renalDiseases', 'Renal ou Urinário', diseaseCategories.renalDiseases)}
-              {renderDiseaseCategory('neurologicalDiseases', 'Neurológica ou Psiquiátrica', diseaseCategories.neurologicalDiseases)}
-              {renderDiseaseCategory('orthopedicDiseases', 'Ortopédica ou Reumatológica', diseaseCategories.orthopedicDiseases)}
-              {renderDiseaseCategory('gynecologicalDiseases', 'Ginecológica ou Mamária', diseaseCategories.gynecologicalDiseases)}
-              {renderDiseaseCategory('bloodDiseases', 'Doenças do Sangue', diseaseCategories.bloodDiseases)}
-              {renderDiseaseCategory('cancerDiseases', 'Câncer', diseaseCategories.cancerDiseases)}
-              {renderDiseaseCategory('ophthalmologicalDiseases', 'Doenças Oftalmológicas', diseaseCategories.ophthalmologicalDiseases)}
-              {renderDiseaseCategory('infectiousDiseases', 'Hepatite e AIDS', diseaseCategories.infectiousDiseases)}
-              {renderDiseaseCategory('dialysisDiseases', 'Insuficiência Renal ou Diálise', diseaseCategories.dialysisDiseases)}
+                  <div>
+                    <Label htmlFor="observations" className="text-sm font-medium">Observações</Label>
+                    <Textarea
+                      id="observations"
+                      value={formData.observations}
+                      onChange={(e) => setFormData(prev => ({...prev, observations: e.target.value}))}
+                      className="mt-2"
+                      rows={3}
+                    />
+                  </div>
 
-              <div className="mt-6 space-y-4">
-                <div>
-                  <Label className="text-sm font-medium">Tem obesidade?</Label>
-                  <RadioGroup 
-                    value={formData.hasObesity} 
-                    onValueChange={(value) => setFormData(prev => ({...prev, hasObesity: value}))}
-                    className="mt-2"
-                  >
-                    <div className="flex items-center space-x-2">
-                      <RadioGroupItem value="sim" id="obesity-sim" />
-                      <Label htmlFor="obesity-sim" className="text-sm">Sim</Label>
-                    </div>
-                    <div className="flex items-center space-x-2">
-                      <RadioGroupItem value="nao" id="obesity-nao" />
-                      <Label htmlFor="obesity-nao" className="text-sm">Não</Label>
-                    </div>
-                  </RadioGroup>
+                  <div>
+                    <Label htmlFor="additionalInfo" className="text-sm font-medium">Informações Adicionais</Label>
+                    <Textarea
+                      id="additionalInfo"
+                      value={formData.additionalInfo}
+                      onChange={(e) => setFormData(prev => ({...prev, additionalInfo: e.target.value}))}
+                      className="mt-2"
+                      rows={3}
+                    />
+                  </div>
                 </div>
+              </CardContent>
+            </Card>
+          </div>
+        </ScrollArea>
 
-                <div>
-                  <Label className="text-sm font-medium">Tem órtese ou prótese?</Label>
-                  <RadioGroup 
-                    value={formData.hasProsthetics} 
-                    onValueChange={(value) => setFormData(prev => ({...prev, hasProsthetics: value}))}
-                    className="mt-2"
-                  >
-                    <div className="flex items-center space-x-2">
-                      <RadioGroupItem value="sim" id="prosthetics-sim" />
-                      <Label htmlFor="prosthetics-sim" className="text-sm">Sim</Label>
-                    </div>
-                    <div className="flex items-center space-x-2">
-                      <RadioGroupItem value="nao" id="prosthetics-nao" />
-                      <Label htmlFor="prosthetics-nao" className="text-sm">Não</Label>
-                    </div>
-                  </RadioGroup>
-                </div>
-
-                <div>
-                  <Label htmlFor="observations" className="text-sm font-medium">Observações</Label>
-                  <Textarea
-                    id="observations"
-                    value={formData.observations}
-                    onChange={(e) => setFormData(prev => ({...prev, observations: e.target.value}))}
-                    className="mt-2"
-                    rows={3}
-                  />
-                </div>
-
-                <div>
-                  <Label htmlFor="additionalInfo" className="text-sm font-medium">Informações Adicionais</Label>
-                  <Textarea
-                    id="additionalInfo"
-                    value={formData.additionalInfo}
-                    onChange={(e) => setFormData(prev => ({...prev, additionalInfo: e.target.value}))}
-                    className="mt-2"
-                    rows={3}
-                  />
-                </div>
-              </div>
-            </CardContent>
-          </Card>
-        </div>
-
-        <div className="p-4 border-t border-gray-200">
+        <div className="p-4 border-t border-gray-200 flex-shrink-0">
           <Button 
             onClick={handleCompleteAssessment}
             className="w-full bg-green-600 hover:bg-green-700"
@@ -302,7 +209,7 @@ const VideoInterview = () => {
       {/* Right Panel - Video */}
       <div className="flex-1 flex flex-col">
         {/* Video Header */}
-        <div className="bg-white border-b border-gray-200 p-4 flex justify-between items-center">
+        <div className="bg-white border-b border-gray-200 p-4 flex justify-between items-center flex-shrink-0">
           <div>
             <h1 className="text-lg font-semibold text-gray-800">Entrevista em Andamento</h1>
             <p className="text-sm text-gray-600">Beneficiário conectado</p>
