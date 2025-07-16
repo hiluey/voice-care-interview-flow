@@ -98,15 +98,15 @@ const VideoInterview = () => {
   );
 
   return (
-    <div className="min-h-screen bg-gray-50 flex overflow-hidden">
+    <div className="h-screen bg-gray-50 flex overflow-hidden">
       {/* Left Panel - Assessment Form */}
-      <div className="w-96 bg-white border-r border-gray-200 flex flex-col">
+      <div className="w-96 bg-white border-r border-gray-200 flex flex-col h-full">
         <div className="p-4 border-b border-gray-200 flex-shrink-0">
           <h2 className="text-lg font-semibold text-gray-800">Avaliação de Saúde</h2>
           <p className="text-sm text-gray-600">PEC Fast - Entrevista</p>
         </div>
         
-        <ScrollArea className="flex-1">
+        <ScrollArea className="flex-1 h-0">
           <div className="p-4 space-y-6">
             {/* Mobilidade */}
             <Card>
@@ -207,7 +207,7 @@ const VideoInterview = () => {
       </div>
 
       {/* Right Panel - Video */}
-      <div className="flex-1 flex flex-col">
+      <div className="flex-1 flex flex-col h-full">
         {/* Video Header */}
         <div className="bg-white border-b border-gray-200 p-4 flex justify-between items-center flex-shrink-0">
           <div>
@@ -220,7 +220,7 @@ const VideoInterview = () => {
         </div>
 
         {/* Video Area */}
-        <div className="flex-1 bg-gray-900 relative">
+        <div className="flex-1 bg-gray-900 relative overflow-hidden">
           <div className="absolute inset-0 flex items-center justify-center">
             <div className="bg-gray-800 rounded-lg p-8 text-center">
               <div className="w-24 h-24 bg-gray-600 rounded-full mx-auto mb-4 flex items-center justify-center">
