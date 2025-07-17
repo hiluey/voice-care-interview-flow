@@ -120,8 +120,13 @@ const StartCall = () => {
             <div className="text-center text-xs text-gray-500 mt-4">
               A chamada será automaticamente gravada para fins de qualidade e treinamento
             </div>
+          <footer className="mt-8 border-t border-gray-300 pt-4 text-center text-sm text-gray-600">
+            <p>© 2025 MedSênior. Todos os direitos reservados.</p>
+          </footer>
+
           </CardContent>
         </Card>
+
       </div>
     </div>
   );
