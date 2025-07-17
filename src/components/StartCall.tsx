@@ -11,12 +11,12 @@ const StartCall = () => {
   const navigate = useNavigate();
   const [patientInfo, setPatientInfo] = useState({
     name: '',
-    cpf: '',
+    nameE: '',
     position: ''
   });
 
   const handleStartCall = () => {
-    if (patientInfo.name && patientInfo.cpf) {
+    if (patientInfo.name && patientInfo.nameE) {
       navigate('/video-interview');
     }
   };
@@ -91,32 +91,24 @@ const StartCall = () => {
               />
             </div>
 
+          
             <div className="space-y-2">
-              <Label htmlFor="patientCpf">CPF</Label>
+              <Label htmlFor="patientName">Nome do Enfermeiro</Label>
               <Input
-                id="patientCpf"
+                id="patientNameE"
                 type="text"
-                placeholder="000.000.000-00"
-                value={patientInfo.cpf}
-                onChange={(e) => setPatientInfo(prev => ({...prev, cpf: e.target.value}))}
+                placeholder="Digite o nome completo"
+                value={patientInfo.nameE}
+                onChange={(e) => setPatientInfo(prev => ({...prev, nameE: e.target.value}))}
               />
             </div>
 
-            <div className="space-y-2">
-              <Label htmlFor="patientPosition">Posição na Fila</Label>
-              <Input
-                id="patientPosition"
-                type="text"
-                placeholder="Número na fila (opcional)"
-                value={patientInfo.position}
-                onChange={(e) => setPatientInfo(prev => ({...prev, position: e.target.value}))}
-              />
-            </div>
+
 
             <div className="pt-4">
               <Button 
                 onClick={handleStartCall}
-                disabled={!patientInfo.name || !patientInfo.cpf}
+                disabled={!patientInfo.name || !patientInfo.nameE}
                 className="w-full bg-blue-600 hover:bg-blue-700 flex items-center justify-center gap-2"
                 size="lg"
               >
