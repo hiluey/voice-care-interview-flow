@@ -16,68 +16,69 @@ const VideoInterview = () => {
     additionalInfo: ''
   });
 
-  const diseaseCategories = {
-    complexDiseases: [
-      'Doença de Alzheimer', 'Demência', 'Parkinson', 'Esclerose Múltipla',
-      'AVC com sequelas', 'Trauma craniano', 'Lesão medular'
-    ],
-    vascularDiseases: [
-      'Hipertensão arterial', 'Varizes', 'Trombose venosa profunda',
-      'Aneurisma', 'Arterioesclerose'
-    ],
-    heartDiseases: [
-      'Infarto do miocárdio', 'Insuficiência cardíaca', 'Arritmias',
-      'Valvulopatias', 'Marca-passo'
-    ],
-    endocrineDiseases: [
-      'Diabetes mellitus', 'Hipotireoidismo', 'Hipertireoidismo',
-      'Osteoporose', 'Obesidade mórbida'
-    ],
-    gastrointestinalDiseases: [
-      'Gastrite', 'Úlcera péptica', 'Refluxo gastroesofágico',
-      'Doença de Crohn', 'Retocolite ulcerativa'
-    ],
-    herniaDiseases: [
-      'Hérnia inguinal', 'Hérnia umbilical', 'Hérnia incisional',
-      'Hérnia de disco'
-    ],
-    intestinalDiseases: [
-      'Síndrome do intestino irritável', 'Constipação crônica',
-      'Doença diverticular', 'Pólipos intestinais'
-    ],
-    renalDiseases: [
-      'Insuficiência renal crônica', 'Cálculos renais', 'Pielonefrite',
-      'Glomerulonefrite'
-    ],
-    neurologicalDiseases: [
-      'Epilepsia', 'Enxaqueca', 'Depressão', 'Ansiedade',
-      'Transtorno bipolar', 'Esquizofrenia'
-    ],
-    orthopedicDiseases: [
-      'Artrite', 'Artrose', 'Fibromialgia', 'Osteoporose',
-      'Bursite', 'Tendinite'
-    ],
-    gynecologicalDiseases: [
-      'Endometriose', 'Mioma uterino', 'Cistos ovarianos',
-      'Câncer de mama', 'Câncer de colo uterino'
-    ],
-    bloodDiseases: [
-      'Anemia', 'Leucemia', 'Hemofilia', 'Trombocitopenia'
-    ],
-    cancerDiseases: [
-      'Câncer de pulmão', 'Câncer de próstata', 'Câncer de cólon',
-      'Câncer de pele', 'Linfoma'
-    ],
-    ophthalmologicalDiseases: [
-      'Glaucoma', 'Catarata', 'Degeneração macular', 'Retinopatia diabética'
-    ],
-    infectiousDiseases: [
-      'Hepatite B', 'Hepatite C', 'HIV/AIDS', 'Tuberculose'
-    ],
-    dialysisDiseases: [
-      'Hemodiálise', 'Diálise peritoneal', 'Transplante renal'
-    ]
-  };
+
+  const renderCategory = (label, items) => (
+  <div key={label} className="mb-4">
+    <h3 className="font-semibold text-sm text-gray-800 mb-1">{label}</h3>
+    <ul className="pl-4 space-y-1">
+      {items.map((disease, index) => (
+        <li key={index} className="text-sm text-gray-700 flex items-start">
+          <span className="text-gray-500 mr-2 mt-0.5">•</span>
+          <span>{disease}</span>
+        </li>
+      ))}
+    </ul>
+  </div>
+);
+
+
+ const diseaseCategories = {
+  complexDiseases: [
+    'Arritimia',
+    'Cirrose hepática',
+    'Depressão',
+    'Diabetes COM complicação',
+    'Diabetes SEM complicação',
+    'Doença Cerebrovascular',
+    'Doença Coronariana COM infarto prévio',
+    'Doença Coronariana SEM infarto prévio (ex. ANGIOPLASTIA, ANGINA)',
+    'Doença de Parkinson',
+    'Doença do Tecido Conjuntivo',
+    'Doença Hepática em grau MODERADO / GRAVE',
+    'Doença Renal Crônica em grau MODERADO / GRAVE',
+    'Doença Vascular Periférica',
+    'Doenças psiquiátricas (ex. Esquizofrenia, Transt. Afetivo Bipolar, Transt. de Ansiedade, etc.)',
+    'Dor Crônica COM limitação física',
+    'DPOC',
+    'Fratura por Fragilidade (ex. Ft do Rádio Distal, Ft do Fêmur Proximal, Ft vertebral)',
+    'Gastrite/DRGE COM doença ulcerosa péptica',
+    'Hemiplegia / Paraplegia',
+    'HIV COM Sínd. da Imunodeficiência Adquirida (AIDS)',
+    'HIV SEM Sínd. da Imunodeficiência Adquirida (AIDS)',
+    'Insuficiencia Cardiaca',
+    'Leucemia',
+    'Linfoma',
+    'Neoplasia maligna / metastática',
+    'Neoplasia sólida',
+    'Valvopatia cardíaca'
+  ],
+  geriatricDiseases: [
+    'Demência',
+    'Instabilidade postural / Quedas recorrentes'
+  ],
+  nonComplexDiseases: [
+    'Dislipidemia',
+    'Esteatose hepática',
+    'Gastrite/DRGE SEM doença ulcerosa péptica',
+    'Hepatite viral crônica (B ou C)',
+    'Hipertensão Arterial Sistêmica',
+    'Hipotireoidismo',
+    'Osteoartrose / osteoartrite',
+    'Osteoporose',
+    'Outros'
+  ]
+};
+
 
   const handleCompleteAssessment = () => {
     navigate('/assessment-complete');
@@ -144,6 +145,29 @@ const VideoInterview = () => {
                 <CardTitle className="text-sm">Contatos de saúde</CardTitle>
               </CardHeader>
               <CardContent className="space-y-4">
+                  <div className="space-y-1">
+                    <p className="text-xs text-muted-foreground">Dica 1:</p>
+                    <p className="text-sm font-medium text-primary">
+                     Registrar o contato telefônico principal do beneficiário.
+                    </p>
+                  </div>
+
+                  <div className="space-y-1">
+                    <p className="text-xs text-muted-foreground">Dica 2:</p>
+                    <p className="text-sm font-medium text-primary">
+                    Em caso de ausência desse contato, registrar o número da pessoa que o acompanha diariamente.
+                    </p>
+                  </div>
+
+                  <div className="space-y-1">
+                    <p className="text-xs text-muted-foreground">Dica 3:</p>
+                    <p className="text-sm font-medium text-primary">
+                  Seus dados serão utilizados para fins de acompanhamento assistencial da saúde na MedSênior.
+                   </p>
+                  </div>
+
+
+
                 <div className="space-y-2">
                   <div>
                     <p className="text-xs text-muted-foreground">Contato celular</p>
@@ -154,6 +178,9 @@ const VideoInterview = () => {
                     <p className="text-sm font-medium text-primary">email@exemplo.com</p>
                   </div>
                 </div>
+                  <div className="space-y-1">
+                    <p className="text-xs text-muted-foreground">Este registro é fundamental para assegurar o sucesso do acompanhamento assistencial da saúde do beneficiário na MedSênior.</p>  
+                  </div>
               </CardContent>
             </Card>
 
@@ -194,8 +221,6 @@ const VideoInterview = () => {
                 </div>
               </CardContent>
             </Card>
-
-
 
             {/* Cognitiva */}
             <Card>
@@ -249,45 +274,36 @@ const VideoInterview = () => {
                   Quais doenças o sr(a) sabe que tem, confirmada por um médico?
                 </p>
 
-                {renderDiseaseCategory('Grupo 1 - Complexas', diseaseCategories.complexDiseases)}
-                {renderDiseaseCategory('Doenças de Veias e Artérias', diseaseCategories.vascularDiseases)}
-                {renderDiseaseCategory('Doenças do Coração', diseaseCategories.heartDiseases)}
-                {renderDiseaseCategory('Glândulas (Tireoide)', diseaseCategories.endocrineDiseases)}
-                {renderDiseaseCategory('Trato Gastrointestinal', diseaseCategories.gastrointestinalDiseases)}
-                {renderDiseaseCategory('Hérnia', diseaseCategories.herniaDiseases)}
-                {renderDiseaseCategory('Intestino', diseaseCategories.intestinalDiseases)}
-                {renderDiseaseCategory('Renal ou Urinário', diseaseCategories.renalDiseases)}
-                {renderDiseaseCategory('Neurológica ou Psiquiátrica', diseaseCategories.neurologicalDiseases)}
-                {renderDiseaseCategory('Ortopédica ou Reumatológica', diseaseCategories.orthopedicDiseases)}
-                {renderDiseaseCategory('Ginecológica ou Mamária', diseaseCategories.gynecologicalDiseases)}
-                {renderDiseaseCategory('Doenças do Sangue', diseaseCategories.bloodDiseases)}
-                {renderDiseaseCategory('Câncer', diseaseCategories.cancerDiseases)}
-                {renderDiseaseCategory('Doenças Oftalmológicas', diseaseCategories.ophthalmologicalDiseases)}
-                {renderDiseaseCategory('Hepatite e AIDS', diseaseCategories.infectiousDiseases)}
-                {renderDiseaseCategory('Insuficiência Renal ou Diálise', diseaseCategories.dialysisDiseases)}
+<div className="space-y-4">
+  {renderCategory(
+    <span className="flex items-center gap-2">
+      <span className="w-2 h-2 rounded-full bg-red-500" />
+      Grupo 1 - Complexas
+    </span>,
+    diseaseCategories.complexDiseases
+  )}
+  {renderCategory(
+    <span className="flex items-center gap-2">
+      <span className="w-2 h-2 rounded-full bg-yellow-500" />
+      Grupo 2 - Não Complexas
+    </span>,
+    diseaseCategories.nonComplexDiseases
+  )}
+  {renderCategory(
+    <span className="flex items-center gap-2">
+      <span className="w-2 h-2 rounded-full bg-green-500" />
+      Grupo 3 - Geriátrica
+    </span>,
+    diseaseCategories.geriatricDiseases
+  )}
+</div>
+
+
 
                 <div className="mt-6 space-y-3">
-                  <div className="flex items-center gap-2">
-                    {/* Ícone círculo pequeno azul */}
-                    <svg xmlns="http://www.w3.org/2000/svg" className="h-4 w-4 text-blue-500 flex-shrink-0" fill="currentColor" viewBox="0 0 24 24">
-                      <circle cx="12" cy="12" r="10" />
-                    </svg>
-                    <Label className="text-sm font-semibold text-gray-800 cursor-default">
-                      Tem obesidade?
-                    </Label>
-                  </div>
 
-                  <div className="flex items-center gap-2">
-                    {/* Ícone círculo pequeno azul */}
-                    <svg xmlns="http://www.w3.org/2000/svg" className="h-4 w-4 text-blue-500 flex-shrink-0" fill="currentColor" viewBox="0 0 24 24">
-                      <circle cx="12" cy="12" r="10" />
-                    </svg>
-                    <Label className="text-sm font-semibold text-gray-800 cursor-default">
-                      Tem órtese ou prótese?
-                    </Label>
-                  </div>
 
-                                    <div className="flex items-center gap-2">
+                    <div className="flex items-center gap-2">
                     {/* Ícone círculo pequeno azul */}
                     <svg xmlns="http://www.w3.org/2000/svg" className="h-4 w-4 text-blue-500 flex-shrink-0" fill="currentColor" viewBox="0 0 24 24">
                       <circle cx="12" cy="12" r="10" />
@@ -296,8 +312,6 @@ const VideoInterview = () => {
                       Alguma doença não foi mencionada?
                     </Label>
                   </div>
-
-
 
                 </div>
               </CardContent>
