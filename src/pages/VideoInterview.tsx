@@ -1,101 +1,242 @@
-import React, { useState } from 'react';
+import React, { useState, useRef } from 'react';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
-import { Textarea } from '@/components/ui/textarea';
 import { Label } from '@/components/ui/label';
-import { Video, VideoOff, Mic, MicOff, PhoneOff } from 'lucide-react';
-import { useNavigate } from 'react-router-dom';
+import { Video } from 'lucide-react';
 import { ScrollArea } from '@/components/ui/scroll-area';
+import { useNavigate } from 'react-router-dom';
+import { Mic, Square, Check } from 'lucide-react';
+
+const SAMPLE_RATE = 16000;
+const CHUNK_SIZE = 1024;
 
 const VideoInterview = () => {
-  const navigate = useNavigate();
-  const [videoEnabled, setVideoEnabled] = useState(true);
-  const [audioEnabled, setAudioEnabled] = useState(true);
-  const [formData, setFormData] = useState({
-    observations: '',
-    additionalInfo: ''
-  });
-
-
-  const renderCategory = (label, items) => (
-  <div key={label} className="mb-4">
-    <h3 className="font-semibold text-sm text-gray-800 mb-1">{label}</h3>
-    <ul className="pl-4 space-y-1">
-      {items.map((disease, index) => (
-        <li key={index} className="text-sm text-gray-700 flex items-start">
-          <span className="text-gray-500 mr-2 mt-0.5">•</span>
-          <span>{disease}</span>
-        </li>
-      ))}
-    </ul>
-  </div>
-);
-
-
- const diseaseCategories = {
-  complexDiseases: [
-    'Arritimia',
-    'Cirrose hepática',
-    'Depressão',
-    'Diabetes COM complicação',
-    'Diabetes SEM complicação',
-    'Doença Cerebrovascular',
-    'Doença Coronariana COM infarto prévio',
-    'Doença Coronariana SEM infarto prévio (ex. ANGIOPLASTIA, ANGINA)',
-    'Doença de Parkinson',
-    'Doença do Tecido Conjuntivo',
-    'Doença Hepática em grau MODERADO / GRAVE',
-    'Doença Renal Crônica em grau MODERADO / GRAVE',
-    'Doença Vascular Periférica',
-    'Doenças psiquiátricas (ex. Esquizofrenia, Transt. Afetivo Bipolar, Transt. de Ansiedade, etc.)',
-    'Dor Crônica COM limitação física',
-    'DPOC',
-    'Fratura por Fragilidade (ex. Ft do Rádio Distal, Ft do Fêmur Proximal, Ft vertebral)',
-    'Gastrite/DRGE COM doença ulcerosa péptica',
-    'Hemiplegia / Paraplegia',
-    'HIV COM Sínd. da Imunodeficiência Adquirida (AIDS)',
-    'HIV SEM Sínd. da Imunodeficiência Adquirida (AIDS)',
-    'Insuficiencia Cardiaca',
-    'Leucemia',
-    'Linfoma',
-    'Neoplasia maligna / metastática',
-    'Neoplasia sólida',
-    'Valvopatia cardíaca'
-  ],
-  geriatricDiseases: [
-    'Demência',
-    'Instabilidade postural / Quedas recorrentes'
-  ],
-  nonComplexDiseases: [
-    'Dislipidemia',
-    'Esteatose hepática',
-    'Gastrite/DRGE SEM doença ulcerosa péptica',
-    'Hepatite viral crônica (B ou C)',
-    'Hipertensão Arterial Sistêmica',
-    'Hipotireoidismo',
-    'Osteoartrose / osteoartrite',
-    'Osteoporose',
-    'Outros'
-  ]
-};
-
-
-  const handleCompleteAssessment = () => {
-    navigate('/assessment-complete');
+  const diseaseCategories = {
+    complexDiseases: [
+      'Arritimia',
+      'Cirrose hepática',
+      'Depressão',
+      'Diabetes COM complicação',
+      'Diabetes SEM complicação',
+      'Doença Cerebrovascular',
+      'Doença Coronariana COM infarto prévio',
+      'Doença Coronariana SEM infarto prévio (ex. ANGIOPLASTIA, ANGINA)',
+      'Doença de Parkinson',
+      'Doença do Tecido Conjuntivo',
+      'Doença Hepática em grau MODERADO / GRAVE',
+      'Doença Renal Crônica em grau MODERADO / GRAVE',
+      'Doença Vascular Periférica',
+      'Doenças psiquiátricas (ex. Esquizofrenia, Transt. Afetivo Bipolar, Transt. de Ansiedade, etc.)',
+      'Dor Crônica COM limitação física',
+      'DPOC',
+      'Fratura por Fragilidade (ex. Ft do Rádio Distal, Ft do Fêmur Proximal, Ft vertebral)',
+      'Gastrite/DRGE COM doença ulcerosa péptica',
+      'Hemiplegia / Paraplegia',
+      'HIV COM Sínd. da Imunodeficiência Adquirida (AIDS)',
+      'HIV SEM Sínd. da Imunodeficiência Adquirida (AIDS)',
+      'Insuficiencia Cardiaca',
+      'Leucemia',
+      'Linfoma',
+      'Neoplasia maligna / metastática',
+      'Neoplasia sólida',
+      'Valvopatia cardíaca'
+    ],
+    geriatricDiseases: [
+      'Demência',
+      'Instabilidade postural / Quedas recorrentes'
+    ],
+    nonComplexDiseases: [
+      'Dislipidemia',
+      'Esteatose hepática',
+      'Gastrite/DRGE SEM doença ulcerosa péptica',
+      'Hepatite viral crônica (B ou C)',
+      'Hipertensão Arterial Sistêmica',
+      'Hipotireoidismo',
+      'Osteoartrose / osteoartrite',
+      'Osteoporose',
+      'Outros'
+    ]
   };
 
-  const renderDiseaseCategory = (categoryTitle: string, diseases: string[]) => (
-    <div className="mb-6">
-      <h4 className="font-semibold text-sm mb-3 text-gray-700">{categoryTitle}</h4>
-      <div className="space-y-1">
-        {diseases.map((disease) => (
-          <div key={disease} className="text-sm text-gray-600">
-            {disease}
-          </div>
+  const navigate = useNavigate();
+
+  const [recording, setRecording] = useState(false);
+  const [transcript, setTranscript] = useState('');
+  const [startTime, setStartTime] = useState<number | null>(null);
+  const [duration, setDuration] = useState<number>(0);
+  const intervalRef = useRef<NodeJS.Timeout | null>(null); // para controlar o setInterval
+  const socketRef = useRef<WebSocket | null>(null);
+  const audioContextRef = useRef<AudioContext | null>(null);
+  const processorRef = useRef<ScriptProcessorNode | null>(null);
+  const streamRef = useRef<MediaStream | null>(null);
+  const stoppedRef = useRef(false); // flag para evitar múltiplas paradas
+
+  // Converter Float32Array para Int16Array (PCM 16 bits)
+  const floatTo16BitPCM = (input: Float32Array) => {
+    const output = new Int16Array(input.length);
+    for (let i = 0; i < input.length; i++) {
+      const s = Math.max(-1, Math.min(1, input[i]));
+      output[i] = s < 0 ? s * 0x8000 : s * 0x7fff;
+    }
+    return output.buffer;
+  };
+
+  const startRecording = async () => {
+    try {
+      setTranscript('');
+      setStartTime(Date.now());
+      stoppedRef.current = false;
+
+      const socket = new WebSocket('wss://entrevista-api.hml.cloud.medsenior.com.br/ws/audio');
+      socketRef.current = socket;
+
+      console.log('Conectando ao WebSocket para transcrição...');
+      console.log('WebSocket criado, estado inicial:', socket.readyState);
+      socket.onopen = async () => {
+        console.log('WebSocket conectado. Solicitando permissão do microfone...');
+        console.log('WebSocket aberto, estado:', socket.readyState);
+        const stream = await navigator.mediaDevices.getUserMedia({
+          audio: {
+            sampleRate: SAMPLE_RATE,
+            channelCount: 1,
+            noiseSuppression: true,
+            echoCancellation: true,
+          }
+        });
+        streamRef.current = stream;
+
+        const AudioCtx = window.AudioContext || (window as any).webkitAudioContext;
+        const audioContext = new AudioCtx({ sampleRate: SAMPLE_RATE });
+        audioContextRef.current = audioContext;
+
+        const source = audioContext.createMediaStreamSource(stream);
+        const processor = audioContext.createScriptProcessor(CHUNK_SIZE, 1, 1);
+        processorRef.current = processor;
+
+        source.connect(processor);
+        processor.connect(audioContext.destination);
+
+        processor.onaudioprocess = (event) => {
+          if (socket.readyState === WebSocket.OPEN) {
+            const pcm = floatTo16BitPCM(event.inputBuffer.getChannelData(0));
+            console.log('Enviando áudio chunk, bytes:', pcm.byteLength);
+            socket.send(pcm);
+          }
+        };
+
+        setDuration(0); // zera o contador ao começar
+        intervalRef.current = setInterval(() => {
+          setDuration((prev) => prev + 1);
+        }, 1000);
+        setRecording(true);
+        console.log('Gravação iniciada. Fale agora.');
+      };
+
+      socket.onmessage = (event) => {
+        console.log('Mensagem do servidor:', event.data);
+        const message = event.data;
+        if (typeof message === 'string') {
+          if (message.startsWith('TRANSCRIÇÃO PARCIAL:')) {
+            setTranscript(prev => prev + message.replace('TRANSCRIÇÃO PARCIAL:', '').trim() + ' ');
+          } else if (message.startsWith('FINAL:')) {
+            setTranscript(prev => prev + '\n[FIM]: ' + message.replace('FINAL:', '').trim());
+            stopRecording();
+            console.log('Transcrição finalizada.');
+          } else {
+            setTranscript(prev => prev + '\n[INFO] ' + message);
+          }
+        }
+      };
+
+      socket.onerror = (event) => {
+        console.error('Erro no WebSocket:', event);
+        stopRecording();
+      };
+
+      socket.onclose = (event) => {
+        console.log('WebSocket desconectado:', event);
+        stopRecording();
+      };
+
+    } catch (err) {
+      console.error('Erro ao iniciar gravação:', err);
+      stopRecording();
+    }
+  };
+
+  const stopRecording = () => {
+    if (stoppedRef.current) return;
+    stoppedRef.current = true;
+
+    console.log('Parando gravação...');
+
+    // Calcula a duração final
+    if (startTime) {
+      const elapsed = Math.floor((Date.now() - startTime) / 1000);
+      setDuration(elapsed);
+    }
+
+
+    if (intervalRef.current) {
+      clearInterval(intervalRef.current);
+      intervalRef.current = null;
+    }
+
+    // Desconecta o processador
+    if (processorRef.current) {
+      processorRef.current.disconnect();
+      processorRef.current = null;
+    }
+
+    // Fecha o contexto de áudio
+    if (audioContextRef.current) {
+      audioContextRef.current.close();
+      audioContextRef.current = null;
+    }
+
+    // Para o stream do microfone
+    if (streamRef.current) {
+      streamRef.current.getTracks().forEach(track => track.stop());
+      streamRef.current = null;
+    }
+
+    // Fecha o WebSocket
+    if (socketRef.current && socketRef.current.readyState === WebSocket.OPEN) {
+      socketRef.current.close();
+      socketRef.current = null;
+    }
+
+    // Atualiza estado
+    setRecording(false);
+  };
+
+  const handleCompleteAssessment = () => {
+    stopRecording();
+    navigate('/assessment-complete', { state: { transcript, duration } });
+  };
+
+  const renderCategory = (label: React.ReactNode, items: string[], keyId: string) => (
+    <div key={keyId} className="mb-4">
+      <h3 className="font-semibold text-sm text-gray-800 mb-1">{label}</h3>
+      <ul className="pl-4 space-y-1">
+        {items.map((disease, index) => (
+          <li
+            key={`${disease}-${index}`}
+            className="text-sm text-gray-700 flex items-start"
+          >
+            <span className="text-gray-500 mr-2 mt-0.5">•</span>
+            <span>{disease}</span>
+          </li>
         ))}
-      </div>
+      </ul>
     </div>
   );
+
+  const formatDuration = (seconds: number) => {
+    const mins = Math.floor(seconds / 60);
+    const secs = seconds % 60;
+    return `${String(mins).padStart(2, '0')}:${String(secs).padStart(2, '0')}`;
+  };
 
   return (
     <div className="h-screen bg-gray-50 flex overflow-hidden">
@@ -104,8 +245,8 @@ const VideoInterview = () => {
         <div className="p-4 border-b border-gray-200 flex-shrink-0">
           <h2 className="text-lg font-semibold text-gray-800">Avaliação de Saúde</h2>
           <p className="text-sm text-gray-600">PEC Fast - Entrevista</p>
-        </div>
 
+        </div>
         <ScrollArea className="flex-1 h-0">
           <div className="p-4 space-y-6">
             {/*Identificação*/}
@@ -145,28 +286,26 @@ const VideoInterview = () => {
                 <CardTitle className="text-sm">Contatos de saúde</CardTitle>
               </CardHeader>
               <CardContent className="space-y-4">
-                  <div className="space-y-1">
-                    <p className="text-xs text-muted-foreground">Dica 1:</p>
-                    <p className="text-sm font-medium text-primary">
-                     Registrar o contato telefônico principal do beneficiário.
-                    </p>
-                  </div>
+                <div className="space-y-1">
+                  <p className="text-xs text-muted-foreground">Dica 1:</p>
+                  <p className="text-sm font-medium text-primary">
+                    Registrar o contato telefônico principal do beneficiário.
+                  </p>
+                </div>
 
-                  <div className="space-y-1">
-                    <p className="text-xs text-muted-foreground">Dica 2:</p>
-                    <p className="text-sm font-medium text-primary">
+                <div className="space-y-1">
+                  <p className="text-xs text-muted-foreground">Dica 2:</p>
+                  <p className="text-sm font-medium text-primary">
                     Em caso de ausência desse contato, registrar o número da pessoa que o acompanha diariamente.
-                    </p>
-                  </div>
+                  </p>
+                </div>
 
-                  <div className="space-y-1">
-                    <p className="text-xs text-muted-foreground">Dica 3:</p>
-                    <p className="text-sm font-medium text-primary">
-                  Seus dados serão utilizados para fins de acompanhamento assistencial da saúde na MedSênior.
-                   </p>
-                  </div>
-
-
+                <div className="space-y-1">
+                  <p className="text-xs text-muted-foreground">Dica 3:</p>
+                  <p className="text-sm font-medium text-primary">
+                    Seus dados serão utilizados para fins de acompanhamento assistencial da saúde na MedSênior.
+                  </p>
+                </div>
 
                 <div className="space-y-2">
                   <div>
@@ -178,9 +317,9 @@ const VideoInterview = () => {
                     <p className="text-sm font-medium text-primary">email@exemplo.com</p>
                   </div>
                 </div>
-                  <div className="space-y-1">
-                    <p className="text-xs text-muted-foreground">Este registro é fundamental para assegurar o sucesso do acompanhamento assistencial da saúde do beneficiário na MedSênior.</p>  
-                  </div>
+                <div className="space-y-1">
+                  <p className="text-xs text-muted-foreground">Este registro é fundamental para assegurar o sucesso do acompanhamento assistencial da saúde do beneficiário na MedSênior.</p>
+                </div>
               </CardContent>
             </Card>
 
@@ -253,7 +392,6 @@ const VideoInterview = () => {
               </CardContent>
             </Card>
 
-
             {/* Comorbidades */}
             <Card>
               <CardHeader className="pb-2">
@@ -274,36 +412,35 @@ const VideoInterview = () => {
                   Quais doenças o sr(a) sabe que tem, confirmada por um médico?
                 </p>
 
-<div className="space-y-4">
-  {renderCategory(
-    <span className="flex items-center gap-2">
-      <span className="w-2 h-2 rounded-full bg-red-500" />
-      Grupo 1 - Complexas
-    </span>,
-    diseaseCategories.complexDiseases
-  )}
-  {renderCategory(
-    <span className="flex items-center gap-2">
-      <span className="w-2 h-2 rounded-full bg-yellow-500" />
-      Grupo 2 - Não Complexas
-    </span>,
-    diseaseCategories.nonComplexDiseases
-  )}
-  {renderCategory(
-    <span className="flex items-center gap-2">
-      <span className="w-2 h-2 rounded-full bg-green-500" />
-      Grupo 3 - Geriátrica
-    </span>,
-    diseaseCategories.geriatricDiseases
-  )}
-</div>
+                <div className="space-y-4">
+                  {renderCategory(
+                    <span className="flex items-center gap-2">
+                      <span className="w-2 h-2 rounded-full bg-red-500" />
+                      Grupo 1 - Complexas
+                    </span>,
+                    diseaseCategories.complexDiseases,
+                    "complexas"
+                  )}
+                  {renderCategory(
+                    <span className="flex items-center gap-2">
+                      <span className="w-2 h-2 rounded-full bg-yellow-500" />
+                      Grupo 2 - Não Complexas
+                    </span>,
+                    diseaseCategories.nonComplexDiseases,
+                    "nao-complexas"
+                  )}
+                  {renderCategory(
+                    <span className="flex items-center gap-2">
+                      <span className="w-2 h-2 rounded-full bg-green-500" />
+                      Grupo 3 - Geriátrica
+                    </span>,
+                    diseaseCategories.geriatricDiseases,
+                    "geriatrica"
+                  )}
 
-
-
+                </div>
                 <div className="mt-6 space-y-3">
-
-
-                    <div className="flex items-center gap-2">
+                  <div className="flex items-center gap-2">
                     {/* Ícone círculo pequeno azul */}
                     <svg xmlns="http://www.w3.org/2000/svg" className="h-4 w-4 text-blue-500 flex-shrink-0" fill="currentColor" viewBox="0 0 24 24">
                       <circle cx="12" cy="12" r="10" />
@@ -369,15 +506,23 @@ const VideoInterview = () => {
             </Card>
           </div>
         </ScrollArea>
-
-        <div className="p-4 border-t border-gray-200 flex-shrink-0">
-          <Button
-            onClick={handleCompleteAssessment}
-            className="w-full bg-green-600 hover:bg-green-700"
-          >
-            Concluir Formulário
-          </Button>
+        <div className="w-full flex justify-center px-6 pb-6 pt-4">
+          <div className="max-w-xs w-full">
+            <Button
+              onClick={recording ? stopRecording : startRecording}
+              variant="ghost"
+              className={`w-full flex items-center justify-center gap-2 px-6 py-3 rounded-full text-sm font-semibold shadow-sm transition-all duration-200 border border-black/10
+        ${recording
+                  ? 'bg-red-100 text-red-600 hover:bg-red-200'
+                  : 'bg-green-100 text-green-600 hover:bg-green-200'}
+      `}
+            >
+              {recording ? <Square size={18} /> : <Mic size={18} />}
+              {recording ? 'Parar Gravação' : 'Gravar'}
+            </Button>
+          </div>
         </div>
+
       </div>
 
       {/* Right Panel - Video */}
@@ -388,9 +533,24 @@ const VideoInterview = () => {
             <h1 className="text-lg font-semibold text-gray-800">Entrevista em Andamento</h1>
             <p className="text-sm text-gray-600">Beneficiário conectado</p>
           </div>
-          <div className="text-sm text-gray-500">
-            Gravação ativa ⏺️
+
+          <div className="flex items-center gap-4">
+            <div className="text-sm text-gray-500 flex items-center space-x-1">
+              <span className="font-medium text-gray-700">Tempo:</span>
+              <span className="font-mono">{formatDuration(duration)}</span>
+            </div>
+
+            <Button
+              onClick={handleCompleteAssessment}
+              variant="ghost"
+              className="flex items-center gap-2 px-4 py-2 rounded-lg border border-blue-500 text-blue-600 hover:bg-blue-50 transition-colors duration-200 text-sm font-medium"
+            >
+              <Check size={16} />
+              Concluir
+            </Button>
           </div>
+
+
         </div>
 
         {/* Video Area */}
@@ -415,33 +575,6 @@ const VideoInterview = () => {
             </div>
           </div>
 
-          {/* Video controls */}
-          <div className="absolute bottom-4 left-1/2 transform -translate-x-1/2 flex space-x-4">
-            <Button
-              variant={audioEnabled ? "default" : "destructive"}
-              size="sm"
-              onClick={() => setAudioEnabled(!audioEnabled)}
-              className="rounded-full w-12 h-12"
-            >
-              {audioEnabled ? <Mic className="w-5 h-5" /> : <MicOff className="w-5 h-5" />}
-            </Button>
-            <Button
-              variant={videoEnabled ? "default" : "destructive"}
-              size="sm"
-              onClick={() => setVideoEnabled(!videoEnabled)}
-              className="rounded-full w-12 h-12"
-            >
-              {videoEnabled ? <Video className="w-5 h-5" /> : <VideoOff className="w-5 h-5" />}
-            </Button>
-            <Button
-              variant="destructive"
-              size="sm"
-              onClick={() => navigate('/')}
-              className="rounded-full w-12 h-12"
-            >
-              <PhoneOff className="w-5 h-5" />
-            </Button>
-          </div>
         </div>
       </div>
     </div>
