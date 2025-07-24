@@ -1,11 +1,37 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { CheckCircle2, UserCheck, Users, Stethoscope, Edit3, Check, X } from 'lucide-react';
 import { useNavigate, useLocation } from 'react-router-dom';
 import { ChevronDown, ChevronUp } from 'lucide-react';
+import stringSimilarity from 'string-similarity';
 
 const AssessmentComplete = () => {
+  const location = useLocation();
+  const { jsonFinal } = location.state || {};
+
+  const transcriptFromLocation = jsonFinal?.transcript || '';
+  const durationFromLocation = jsonFinal?.duration || 0;
+
+  // Estado para JSON extraído do transcript
+  const [mensagemServidor, setMensagemServidor] = useState(null);
+
+  // Extrai JSON do transcript uma vez quando transcriptFromLocation mudar
+  useEffect(() => {
+    try {
+      const match = transcriptFromLocation.match(/\[INFO\] ({[\s\S]*})/);
+      if (match && match[1]) {
+        const parsed = JSON.parse(match[1]);
+        setMensagemServidor(parsed);
+      } else {
+        setMensagemServidor(null);
+      }
+    } catch (err) {
+      console.error('❌ Erro ao extrair JSON:', err);
+      setMensagemServidor(null);
+    }
+  }, [transcriptFromLocation]);
+
   // Perguntas fixas (não editáveis)
   const perguntasTexto = [
     'Contato celular',
@@ -73,73 +99,100 @@ const AssessmentComplete = () => {
   ];
 
   const navigate = useNavigate();
-  const location = useLocation();
 
-  const transcriptFromLocation = location.state?.transcript?.toLowerCase() ?? '';
-  const durationFromLocation = location.state?.duration ?? 0;
+  // Estados principais (respostas e checkbox)
+  const [respostas, setRespostas] = useState(() =>
+    perguntasTexto.map((p) => ({ pergunta: p, resposta: '' }))
+  );
+  const [respostasCheckbox, setRespostasCheckbox] = useState([]);
 
-  const [transcript] = useState(transcriptFromLocation);
+  // Backup para edição
+  const [backupRespostas, setBackupRespostas] = useState(respostas);
+  const [backupRespostasCheckbox, setBackupRespostasCheckbox] = useState(respostasCheckbox);
+
+  // Estado de edição
   const [isEditing, setIsEditing] = useState(false);
-  const [duration] = useState(durationFromLocation);
   const [mostrarTranscricaoCompleta, setMostrarTranscricaoCompleta] = useState(false);
 
-  const formatDuration = (totalSeconds: number) => {
+  // Quando mensagemServidor mudar, preenche respostas e checkbox
+  useEffect(() => {
+    if (!mensagemServidor) return;
+
+    const respostasMap = {};
+
+    if (mensagemServidor.dados_pessoais) {
+      if (mensagemServidor.dados_pessoais.celular)
+        respostasMap['Contato celular'] = mensagemServidor.dados_pessoais.celular;
+      if (mensagemServidor.dados_pessoais.email)
+        respostasMap['E-mail'] = mensagemServidor.dados_pessoais.email;
+    }
+
+    if (Array.isArray(mensagemServidor.declaracao_saude)) {
+      for (const minhaPergunta of perguntasTexto) {
+        const perguntasDaIA = mensagemServidor.declaracao_saude.map(p => p.pergunta);
+        const melhorMatch = stringSimilarity.findBestMatch(minhaPergunta, perguntasDaIA);
+        const melhor = melhorMatch.bestMatch;
+
+        if (melhor.rating > 0.4) {
+          const resposta = mensagemServidor.declaracao_saude.find(p => p.pergunta === melhor.target)?.resposta;
+          if (resposta) {
+            respostasMap[minhaPergunta] = resposta;
+          }
+        }
+      }
+    }
+
+    setRespostas(
+      perguntasTexto.map((p) => ({
+        pergunta: p,
+        resposta: respostasMap[p] || '',
+      }))
+    );
+
+    const textoCompleto = mensagemServidor.declaracao_saude
+      ? mensagemServidor.declaracao_saude.map(d => d.resposta).join(' ').toLowerCase()
+      : '';
+
+    const checkbox = doencas.flatMap(({ itens }) =>
+      itens.filter((doenca) => textoCompleto.includes(doenca.toLowerCase()))
+    );
+
+    setRespostasCheckbox(checkbox);
+  }, [mensagemServidor]);
+
+  // Funções auxiliares e handlers
+
+  const formatDuration = (totalSeconds) => {
     const minutes = Math.floor(totalSeconds / 60);
     const seconds = totalSeconds % 60;
     return `${minutes} min ${seconds} s`;
   };
 
-  const extrairRespostaTexto = (pergunta: string) => {
-    const index = transcriptFromLocation.indexOf(pergunta.toLowerCase());
-    if (index === -1) return '';
-    const trecho = transcriptFromLocation.slice(index + pergunta.length);
-    const fim = trecho.indexOf('.');
-    return trecho.slice(0, fim !== -1 ? fim : undefined).trim();
-  };
-
-  const [respostas, setRespostas] = useState(
-    perguntasTexto.map((p) => ({ pergunta: p, resposta: extrairRespostaTexto(p) }))
-  );
-
-  const handleChangeResposta = (idx: number, valor: string) => {
+  const handleChangeResposta = (idx, valor) => {
     setRespostas((r) =>
       r.map((item, i) => (i === idx ? { ...item, resposta: valor } : item))
     );
   };
 
-  const [respostasCheckbox, setRespostasCheckbox] = useState<string[]>(
-    doencas.flatMap(({ itens }) =>
-      itens.filter((doenca) => transcriptFromLocation.includes(doenca.toLowerCase()))
-    )
-  );
-
-  // Backup dos estados para edição
-  const [backupRespostas, setBackupRespostas] = useState(respostas);
-  const [backupRespostasCheckbox, setBackupRespostasCheckbox] = useState<string[]>(respostasCheckbox);
-
-  // Começar edição: guarda backup
   const iniciarEdicao = () => {
     setBackupRespostas(respostas.map(r => ({ ...r })));
     setBackupRespostasCheckbox(respostasCheckbox.map(d => d));
     setIsEditing(true);
   };
 
-  // Salvar edição: atualiza backup e sai do modo edição
   const salvarEdicao = () => {
     setBackupRespostas(respostas.map(r => ({ ...r })));
     setBackupRespostasCheckbox(respostasCheckbox.map(d => d));
     setIsEditing(false);
   };
 
-  // Cancelar edição: restaura backup e sai do modo edição
   const cancelarEdicao = () => {
     setRespostas(backupRespostas.map(r => ({ ...r })));
     setRespostasCheckbox(backupRespostasCheckbox.map(d => d));
     setIsEditing(false);
   };
 
-  // Alterna o estado do checkbox (só em edição)
-  const toggleCheckbox = (doenca: string) => {
+  const toggleCheckbox = (doenca) => {
     if (!isEditing) return;
     if (respostasCheckbox.includes(doenca)) {
       setRespostasCheckbox((prev) => prev.filter((d) => d !== doenca));
@@ -291,7 +344,7 @@ const AssessmentComplete = () => {
 
         {mostrarTranscricaoCompleta && (
           <div className="bg-white border border-gray-300 rounded-md p-4 mt-4 max-h-[250px] overflow-y-auto text-xs text-gray-700">
-            <pre className="whitespace-pre-wrap">{transcript || 'Nenhuma transcrição disponível.'}</pre>
+            <pre className="whitespace-pre-wrap">{transcriptFromLocation || 'Nenhuma transcrição disponível.'}</pre>
           </div>
         )}
 
@@ -301,7 +354,7 @@ const AssessmentComplete = () => {
             <div className="space-y-1 text-xs text-gray-600">
               <div className="flex justify-between">
                 <span>Duração:</span>
-                <span>{formatDuration(duration)}</span>
+                <span>{formatDuration(durationFromLocation)}</span>
               </div>
               <div className="flex justify-between">
                 <span>Formulários:</span>
