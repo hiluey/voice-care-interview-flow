@@ -32,7 +32,6 @@ const AssessmentComplete = () => {
     'Apresenta dificuldade para sustentar o tronco ou está acamado?',
     'Cognitiva: Você ou seu familiar perceberam que o sr(a) apresentou piora para se comunicar ou interagir com outras pessoas nos últimos meses?',
     'Necessita de auxílio para ser compreendido?',
-    'Quais doenças o senhor sabe que tem, confirmado por um médico?',
   ];
 
   const doencas = [
