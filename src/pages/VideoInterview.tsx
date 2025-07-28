@@ -4,7 +4,7 @@ import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Label } from '@/components/ui/label';
 import { Video } from 'lucide-react';
 import { ScrollArea } from '@/components/ui/scroll-area';
-import { useNavigate } from 'react-router-dom';
+import { useLocation, useNavigate } from 'react-router-dom';
 import { Mic, Square, Check } from 'lucide-react';
 
 const SAMPLE_RATE = 16000;
@@ -72,11 +72,13 @@ const [respostas, setRespostas] = useState(
 );
 
 const [respostasCheckbox, setRespostasCheckbox] = useState<string[]>([]);
-
+    const location = useLocation();
   const navigate = useNavigate();
 
   const [recording, setRecording] = useState(false);
   const [transcript, setTranscript] = useState('');
+    const patientName = location.state?.patientName || '';
+  const nurseName = location.state?.nurseName || '';
   const [startTime, setStartTime] = useState<number | null>(null);
   const [duration, setDuration] = useState<number>(0);
   const intervalRef = useRef<NodeJS.Timeout | null>(null); // para controlar o setInterval
@@ -238,10 +240,10 @@ const handleCompleteAssessment = () => {
     respostasCheckbox,
     
   };
-  navigate('/assessment-complete', {
-    state: { jsonFinal },
-  });
-};
+    navigate('/assessment-complete', {
+      state: { jsonFinal, patientName, nurseName },
+    });
+  };
 
 
   const renderCategory = (label: React.ReactNode, items: string[], keyId: string) => (

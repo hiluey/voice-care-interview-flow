@@ -17,9 +17,11 @@ const StartCall = () => {
 
   const handleStartCall = () => {
     if (patientInfo.name && patientInfo.nameE) {
-      navigate('/video-interview');
+      navigate('/video-interview', { state: { patientName: patientInfo.name, nurseName: patientInfo.nameE } });
+
     }
   };
+
 
   return (
     <div className="min-h-screen bg-gradient-to-br from-blue-50 to-indigo-100 flex items-center justify-center p-4">
@@ -78,7 +80,7 @@ const StartCall = () => {
               Preencha os dados do beneficiário para iniciar a entrevista
             </p>
           </CardHeader>
-          
+
           <CardContent className="space-y-4">
             <div className="space-y-2">
               <Label htmlFor="patientName">Nome do Beneficiário</Label>
@@ -87,11 +89,11 @@ const StartCall = () => {
                 type="text"
                 placeholder="Digite o nome completo"
                 value={patientInfo.name}
-                onChange={(e) => setPatientInfo(prev => ({...prev, name: e.target.value}))}
+                onChange={(e) => setPatientInfo(prev => ({ ...prev, name: e.target.value }))}
               />
             </div>
 
-          
+
             <div className="space-y-2">
               <Label htmlFor="patientName">Nome do Enfermeiro</Label>
               <Input
@@ -99,14 +101,14 @@ const StartCall = () => {
                 type="text"
                 placeholder="Digite o nome completo"
                 value={patientInfo.nameE}
-                onChange={(e) => setPatientInfo(prev => ({...prev, nameE: e.target.value}))}
+                onChange={(e) => setPatientInfo(prev => ({ ...prev, nameE: e.target.value }))}
               />
             </div>
 
 
 
             <div className="pt-4">
-              <Button 
+              <Button
                 onClick={handleStartCall}
                 disabled={!patientInfo.name || !patientInfo.nameE}
                 className="w-full bg-blue-600 hover:bg-blue-700 flex items-center justify-center gap-2"
@@ -120,9 +122,9 @@ const StartCall = () => {
             <div className="text-center text-xs text-gray-500 mt-4">
               A chamada será automaticamente gravada para fins de qualidade e treinamento
             </div>
-          <footer className="mt-8 border-t border-gray-300 pt-4 text-center text-sm text-gray-600">
-            <p>© 2025 MedSênior. Todos os direitos reservados.</p>
-          </footer>
+            <footer className="mt-8 border-t border-gray-300 pt-4 text-center text-sm text-gray-600">
+              <p>© 2025 MedSênior. Todos os direitos reservados.</p>
+            </footer>
 
           </CardContent>
         </Card>

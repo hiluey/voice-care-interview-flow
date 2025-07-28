@@ -16,7 +16,7 @@ import stringSimilarity from 'string-similarity';
 
 const AssessmentComplete = () => {
   const location = useLocation();
-  const { jsonFinal } = location.state || {};
+  const { patientName, nurseName, jsonFinal } = location.state || {};
 
   const transcriptFromLocation =
     typeof jsonFinal?.transcript === 'string' ? jsonFinal.transcript : '';
@@ -278,6 +278,11 @@ const AssessmentComplete = () => {
               {formatDuration(durationFromLocation)}
             </span>
           </p>
+          <p className="text-md text-gray-700 mt-2">
+            Nome beneficiário: <span className="font-semibold">{patientName}</span>
+          </p>
+
+
         </CardHeader>
 
         <CardContent className="px-10 py-8 space-y-10">
