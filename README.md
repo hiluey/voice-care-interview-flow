@@ -1,9 +1,3 @@
-# Welcome to your Lovable project
-
-## Project info
-
-**URL**: https://lovable.dev/projects/da6b17b8-3e8a-4ef3-84ff-c39d545ada90
-
 ## How can I edit this code?
 
 There are several ways of editing your application.
@@ -54,8 +48,4 @@ This project is built with:
 - React
 - shadcn-ui
 - Tailwind CSS
-
-## How can I deploy this project?
-
-Simply open [Lovable](https://lovable.dev/projects/da6b17b8-3e8a-4ef3-84ff-c39d545ada90) and click on Share -> Publish.
 
