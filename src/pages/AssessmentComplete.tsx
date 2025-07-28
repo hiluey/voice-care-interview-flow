@@ -168,20 +168,29 @@ const AssessmentComplete = () => {
           const entradaIA = mensagemServidor.declaracao_saude.find(
             (p) => p.pergunta === melhor.target
           );
-          const resposta = entradaIA?.resposta;
 
-          if (typeof resposta === 'string') {
-            respostasMap[minhaPergunta] = resposta;
-          } else if (Array.isArray(entradaIA?.subperguntas)) {
-            const respostasSub = entradaIA.subperguntas
-              .filter((sub) => sub.resposta && sub.resposta.toLowerCase() === 'sim')
-              .map((sub) => sub.pergunta)
-              .join(', ');
+          if (!entradaIA) continue;
 
-            respostasMap[minhaPergunta] = respostasSub || 'Negativo para alternativas';
+          // Se for a pergunta principal
+          if (entradaIA.resposta && typeof entradaIA.resposta === 'string') {
+            respostasMap[minhaPergunta] = entradaIA.resposta;
+          }
+
+          // Subperguntas mapeadas diretamente
+          if (Array.isArray(entradaIA.subperguntas)) {
+            for (const sub of entradaIA.subperguntas) {
+              // Confere se a subpergunta está listada no perguntasTexto
+              const perguntaSub = perguntasTexto.find((p) =>
+                stringSimilarity.compareTwoStrings(p, sub.pergunta) > 0.8
+              );
+              if (perguntaSub && sub.resposta) {
+                respostasMap[perguntaSub] = sub.resposta;
+              }
+            }
           }
         }
       }
+
     }
 
     setRespostas(
@@ -361,11 +370,10 @@ const AssessmentComplete = () => {
                       return (
                         <label
                           key={doenca}
-                          className={`flex items-center space-x-2 cursor-pointer rounded border px-3 py-1.5 text-xs select-none transition-colors duration-200 ${
-                            checked
+                          className={`flex items-center space-x-2 cursor-pointer rounded border px-3 py-1.5 text-xs select-none transition-colors duration-200 ${checked
                               ? 'border-green-600 bg-green-50 text-green-900 font-semibold shadow'
                               : 'border-gray-300 bg-white text-gray-700 hover:bg-green-50 hover:border-green-400'
-                          }`}
+                            }`}
                           onClick={() => toggleCheckbox(doenca)}
                           tabIndex={isEditing ? 0 : -1}
                         >
