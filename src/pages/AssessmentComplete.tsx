@@ -1,6 +1,6 @@
-import React, { useState, useEffect } from 'react';
-import { Button } from '@/components/ui/button';
-import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
+import React, { useState, useEffect } from "react";
+import { Button } from "@/components/ui/button";
+import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import {
   CheckCircle2,
   UserCheck,
@@ -10,83 +10,83 @@ import {
   X,
   ChevronDown,
   ChevronUp,
-} from 'lucide-react';
-import { useNavigate, useLocation } from 'react-router-dom';
-import stringSimilarity from 'string-similarity';
+} from "lucide-react";
+import { useNavigate, useLocation } from "react-router-dom";
+import stringSimilarity from "string-similarity";
 
 const AssessmentComplete = () => {
   const location = useLocation();
   const { patientName, nurseName, jsonFinal } = location.state || {};
 
   const transcriptFromLocation =
-    typeof jsonFinal?.transcript === 'string' ? jsonFinal.transcript : '';
+    typeof jsonFinal?.transcript === "string" ? jsonFinal.transcript : "";
   const durationFromLocation = jsonFinal?.duration || 0;
 
   const [mensagemServidor, setMensagemServidor] = useState(null);
 
   const perguntasTexto = [
-    'Contato celular',
-    'E-mail',
-    'Mobilidade: Você ou seu familiar notaram piora na capacidade de locomoção ou movimentação que impacte nas atividades do dia a dia?',
-    'Necessita de auxílio para realizar as atividades?',
-    'Apresenta dificuldade para sustentar o tronco ou está acamado?',
-    'Cognitiva: Você ou seu familiar perceberam que o sr(a) apresentou piora para se comunicar ou interagir com outras pessoas nos últimos meses?',
-    'Necessita de auxílio para ser compreendido?',
+    "Contato celular",
+    "E-mail",
+    "Mobilidade: Você ou seu familiar notaram piora na capacidade de locomoção ou movimentação que impacte nas atividades do dia a dia?",
+    "Necessita de auxílio para realizar as atividades?",
+    "Apresenta dificuldade para sustentar o tronco ou está acamado?",
+    "Cognitiva: Você ou seu familiar perceberam que o sr(a) apresentou piora para se comunicar ou interagir com outras pessoas nos últimos meses?",
+    "Necessita de auxílio para ser compreendido?",
   ];
 
   const doencas = [
     {
-      grupo: 'Grupo 1 - Complexas',
+      grupo: "Grupo 1 - Complexas",
       itens: [
-        'Arritimia',
-        'Cirrose hepática',
-        'Depressão',
-        'Diabetes com complicação',
-        'Diabetes sem complicação',
-        'Doença cerebrovascular',
-        'Doença coronariana com infarto prévio',
-        'Doença coronariana sem infarto prévio',
-        'Doença de Parkinson',
-        'Doença do tecido conjuntivo',
-        'Doença hepática em grau moderado / grave',
-        'Doença renal crônica em grau moderado / grave',
-        'Doença vascular periférica',
-        'Doenças psiquiátricas',
-        'Dor crônica com limitação física',
-        'DPOC',
-        'Fratura por fragilidade',
-        'Gastrite/DRGE com doença ulcerosa péptica',
-        'Hemiplegia / Paraplegia',
-        'HIV com Síndrome da Imunodeficiência Adquirida (AIDS)',
-        'HIV sem Síndrome da Imunodeficiência Adquirida (AIDS)',
-        'Insuficiência cardíaca',
-        'Leucemia',
-        'Linfoma',
-        'Neoplasia maligna / metastática',
-        'Neoplasia sólida',
-        'Valvopatia cardíaca',
+        "Arritimia",
+        "Cirrose hepática",
+        "Depressão",
+        "Diabetes com complicação",
+        "Diabetes sem complicação",
+        "Doença cerebrovascular",
+        "Doença coronariana com infarto prévio",
+        "Doença coronariana sem infarto prévio",
+        "Doença de Parkinson",
+        "Doença do tecido conjuntivo",
+        "Doença hepática em grau moderado / grave",
+        "Doença renal crônica em grau moderado / grave",
+        "Doença vascular periférica",
+        "Doenças psiquiátricas",
+        "Dor crônica com limitação física",
+        "DPOC",
+        "Fratura por fragilidade",
+        "Gastrite/DRGE com doença ulcerosa péptica",
+        "Hemiplegia / Paraplegia",
+        "HIV com Síndrome da Imunodeficiência Adquirida (AIDS)",
+        "HIV sem Síndrome da Imunodeficiência Adquirida (AIDS)",
+        "Insuficiência cardíaca",
+        "Leucemia",
+        "Linfoma",
+        "Neoplasia maligna / metastática",
+        "Neoplasia sólida",
+        "Valvopatia cardíaca",
       ],
     },
     {
-      grupo: 'Grupo 2 - Não Complexas',
+      grupo: "Grupo 2 - Não Complexas",
       itens: [
-        'Dislipidemia',
-        'Esteatose hepática',
-        'Gastrite/DRGE sem doença ulcerosa péptica',
-        'Hepatite viral crônica (B ou C)',
-        'Hipertensão arterial sistêmica',
-        'Hipotireoidismo',
-        'Osteoartrose / osteoartrite',
-        'Osteoporose',
-        'Outros',
+        "Dislipidemia",
+        "Esteatose hepática",
+        "Gastrite/DRGE sem doença ulcerosa péptica",
+        "Hepatite viral crônica (B ou C)",
+        "Hipertensão arterial sistêmica",
+        "Hipotireoidismo",
+        "Osteoartrose / osteoartrite",
+        "Osteoporose",
+        "Outros",
       ],
     },
     {
-      grupo: 'Grupo 3 - Geriátrica',
+      grupo: "Grupo 3 - Geriátrica",
       itens: [
-        'Demência',
-        'Instabilidade postural / Quedas recorrentes',
-        'Alguma doença não foi mencionada?',
+        "Demência",
+        "Instabilidade postural / Quedas recorrentes",
+        "Alguma doença não foi mencionada?",
       ],
     },
   ];
@@ -94,21 +94,20 @@ const AssessmentComplete = () => {
   const navigate = useNavigate();
 
   const [respostas, setRespostas] = useState(() =>
-    perguntasTexto.map((p) => ({ pergunta: p, resposta: '' }))
+    perguntasTexto.map((p) => ({ pergunta: p, resposta: "" })),
   );
 
   const [respostasCheckbox, setRespostasCheckbox] = useState([]);
   const [backupRespostas, setBackupRespostas] = useState(respostas);
-  const [backupRespostasCheckbox, setBackupRespostasCheckbox] = useState(
-    respostasCheckbox
-  );
+  const [backupRespostasCheckbox, setBackupRespostasCheckbox] =
+    useState(respostasCheckbox);
   const [isEditing, setIsEditing] = useState(false);
   const [mostrarTranscricaoCompleta, setMostrarTranscricaoCompleta] =
     useState(false);
 
   useEffect(() => {
     try {
-      if (typeof transcriptFromLocation !== 'string') {
+      if (typeof transcriptFromLocation !== "string") {
         setMensagemServidor(null);
         return;
       }
@@ -121,9 +120,9 @@ const AssessmentComplete = () => {
         if (Array.isArray(parsed.declaracao_saude)) {
           parsed.declaracao_saude = parsed.declaracao_saude.filter(
             (item) =>
-              typeof item === 'object' &&
+              typeof item === "object" &&
               item !== null &&
-              typeof item.pergunta === 'string'
+              typeof item.pergunta === "string",
           );
         }
 
@@ -132,7 +131,7 @@ const AssessmentComplete = () => {
         setMensagemServidor(null);
       }
     } catch (err) {
-      console.error('❌ Erro ao extrair JSON:', err);
+      console.error("❌ Erro ao extrair JSON:", err);
       setMensagemServidor(null);
     }
   }, [transcriptFromLocation]);
@@ -144,34 +143,35 @@ const AssessmentComplete = () => {
 
     if (mensagemServidor.dados_pessoais) {
       if (mensagemServidor.dados_pessoais.celular) {
-        respostasMap['Contato celular'] = mensagemServidor.dados_pessoais.celular;
+        respostasMap["Contato celular"] =
+          mensagemServidor.dados_pessoais.celular;
       }
       if (mensagemServidor.dados_pessoais.email) {
-        respostasMap['E-mail'] = mensagemServidor.dados_pessoais.email;
+        respostasMap["E-mail"] = mensagemServidor.dados_pessoais.email;
       }
     }
 
     if (Array.isArray(mensagemServidor.declaracao_saude)) {
       const perguntasDaIA = mensagemServidor.declaracao_saude
         .map((p) => p.pergunta)
-        .filter((p) => typeof p === 'string');
+        .filter((p) => typeof p === "string");
 
       for (const minhaPergunta of perguntasTexto) {
         const melhorMatch = stringSimilarity.findBestMatch(
           minhaPergunta,
-          perguntasDaIA
+          perguntasDaIA,
         );
         const melhor = melhorMatch.bestMatch;
 
         if (melhor.rating > 0.4) {
           const entradaIA = mensagemServidor.declaracao_saude.find(
-            (p) => p.pergunta === melhor.target
+            (p) => p.pergunta === melhor.target,
           );
 
           if (!entradaIA) continue;
 
           // Se for a pergunta principal
-          if (entradaIA.resposta && typeof entradaIA.resposta === 'string') {
+          if (entradaIA.resposta && typeof entradaIA.resposta === "string") {
             respostasMap[minhaPergunta] = entradaIA.resposta;
           }
 
@@ -179,8 +179,9 @@ const AssessmentComplete = () => {
           if (Array.isArray(entradaIA.subperguntas)) {
             for (const sub of entradaIA.subperguntas) {
               // Confere se a subpergunta está listada no perguntasTexto
-              const perguntaSub = perguntasTexto.find((p) =>
-                stringSimilarity.compareTwoStrings(p, sub.pergunta) > 0.8
+              const perguntaSub = perguntasTexto.find(
+                (p) =>
+                  stringSimilarity.compareTwoStrings(p, sub.pergunta) > 0.8,
               );
               if (perguntaSub && sub.resposta) {
                 respostasMap[perguntaSub] = sub.resposta;
@@ -189,14 +190,13 @@ const AssessmentComplete = () => {
           }
         }
       }
-
     }
 
     setRespostas(
       perguntasTexto.map((p) => ({
         pergunta: p,
-        resposta: respostasMap[p] || '',
-      }))
+        resposta: respostasMap[p] || "",
+      })),
     );
 
     const respostasDoencas = new Set();
@@ -205,7 +205,7 @@ const AssessmentComplete = () => {
       for (const item of mensagemServidor.declaracao_saude) {
         if (Array.isArray(item.subperguntas)) {
           for (const sub of item.subperguntas) {
-            if (sub.resposta && sub.resposta.toLowerCase() === 'sim') {
+            if (sub.resposta && sub.resposta.toLowerCase() === "sim") {
               respostasDoencas.add(sub.pergunta.toLowerCase());
             }
           }
@@ -214,7 +214,7 @@ const AssessmentComplete = () => {
     }
 
     const checkbox = doencas.flatMap(({ itens }) =>
-      itens.filter((doenca) => respostasDoencas.has(doenca.toLowerCase()))
+      itens.filter((doenca) => respostasDoencas.has(doenca.toLowerCase())),
     );
 
     setRespostasCheckbox(checkbox);
@@ -222,7 +222,7 @@ const AssessmentComplete = () => {
 
   const handleChangeResposta = (idx, valor) => {
     setRespostas((r) =>
-      r.map((item, i) => (i === idx ? { ...item, resposta: valor } : item))
+      r.map((item, i) => (i === idx ? { ...item, resposta: valor } : item)),
     );
   };
 
@@ -253,8 +253,8 @@ const AssessmentComplete = () => {
     }
   };
 
-  const handleApproveAssessment = () => navigate('/');
-  const handleNextPatient = () => navigate('/');
+  const handleApproveAssessment = () => navigate("/");
+  const handleNextPatient = () => navigate("/");
 
   const formatDuration = (totalSeconds) => {
     const minutes = Math.floor(totalSeconds / 60);
@@ -273,16 +273,15 @@ const AssessmentComplete = () => {
             Avaliação Concluída
           </CardTitle>
           <p className="text-sm text-gray-500 mt-1">
-            Transcrição processada em{' '}
+            Transcrição processada em{" "}
             <span className="font-semibold text-green-600">
               {formatDuration(durationFromLocation)}
             </span>
           </p>
           <p className="text-md text-gray-700 mt-2">
-            Nome beneficiário: <span className="font-semibold">{patientName}</span>
+            Nome beneficiário:{" "}
+            <span className="font-semibold">{patientName}</span>
           </p>
-
-
         </CardHeader>
 
         <CardContent className="px-10 py-8 space-y-10">
@@ -345,7 +344,9 @@ const AssessmentComplete = () => {
                       aria-label={`Resposta para ${pergunta}`}
                     >
                       {resposta || (
-                        <span className="text-gray-400 italic">Sem resposta</span>
+                        <span className="text-gray-400 italic">
+                          Sem resposta
+                        </span>
                       )}
                     </div>
                   )}
@@ -374,10 +375,11 @@ const AssessmentComplete = () => {
                       return (
                         <label
                           key={doenca}
-                          className={`flex items-center space-x-2 cursor-pointer rounded border px-3 py-1.5 text-xs select-none transition-colors duration-200 ${checked
-                            ? 'border-green-600 bg-green-50 text-green-900 font-semibold shadow'
-                            : 'border-gray-300 bg-white text-gray-700 hover:bg-green-50 hover:border-green-400'
-                            }`}
+                          className={`flex items-center space-x-2 cursor-pointer rounded border px-3 py-1.5 text-xs select-none transition-colors duration-200 ${
+                            checked
+                              ? "border-green-600 bg-green-50 text-green-900 font-semibold shadow"
+                              : "border-gray-300 bg-white text-gray-700 hover:bg-green-50 hover:border-green-400"
+                          }`}
                           onClick={() => toggleCheckbox(doenca)}
                           tabIndex={isEditing ? 0 : -1}
                         >
@@ -418,7 +420,7 @@ const AssessmentComplete = () => {
                 className="max-h-48 overflow-auto rounded-md border border-gray-300 p-4 text-xs bg-gray-50 text-gray-800 whitespace-pre-wrap leading-relaxed font-mono shadow-inner"
                 aria-live="polite"
               >
-                {transcriptFromLocation || 'Sem transcrição disponível'}
+                {transcriptFromLocation || "Sem transcrição disponível"}
               </pre>
             )}
           </section>
