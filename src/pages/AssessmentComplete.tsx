@@ -375,8 +375,8 @@ const AssessmentComplete = () => {
                         <label
                           key={doenca}
                           className={`flex items-center space-x-2 cursor-pointer rounded border px-3 py-1.5 text-xs select-none transition-colors duration-200 ${checked
-                              ? 'border-green-600 bg-green-50 text-green-900 font-semibold shadow'
-                              : 'border-gray-300 bg-white text-gray-700 hover:bg-green-50 hover:border-green-400'
+                            ? 'border-green-600 bg-green-50 text-green-900 font-semibold shadow'
+                            : 'border-gray-300 bg-white text-gray-700 hover:bg-green-50 hover:border-green-400'
                             }`}
                           onClick={() => toggleCheckbox(doenca)}
                           tabIndex={isEditing ? 0 : -1}

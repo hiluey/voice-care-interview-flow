@@ -57,27 +57,27 @@ const VideoInterview = () => {
       'Outros'
     ]
   };
-const perguntasTexto = [
-  'Contato celular',
-  'E-mail',
-  'Você ou seu familiar notaram piora na capacidade de locomoção ou movimentação que impacte nas atividades do dia a dia?',
-  '1.1 Necessita de auxílio para realizar as atividades?',
-  '1.2 Apresenta dificuldade para sustentar o tronco ou está acamado?',
-  '2. Cognitiva: Você ou seu familiar perceberam que o sr(a) apresentou piora para se comunicar ou interagir com outras pessoas nos últimos meses?',
-  '2.1 Necessita de auxílio para ser compreendido?',
-];
+  const perguntasTexto = [
+    'Contato celular',
+    'E-mail',
+    'Você ou seu familiar notaram piora na capacidade de locomoção ou movimentação que impacte nas atividades do dia a dia?',
+    '1.1 Necessita de auxílio para realizar as atividades?',
+    '1.2 Apresenta dificuldade para sustentar o tronco ou está acamado?',
+    '2. Cognitiva: Você ou seu familiar perceberam que o sr(a) apresentou piora para se comunicar ou interagir com outras pessoas nos últimos meses?',
+    '2.1 Necessita de auxílio para ser compreendido?',
+  ];
 
-const [respostas, setRespostas] = useState(
-  perguntasTexto.map(p => ({ pergunta: p, resposta: '' }))
-);
+  const [respostas, setRespostas] = useState(
+    perguntasTexto.map(p => ({ pergunta: p, resposta: '' }))
+  );
 
-const [respostasCheckbox, setRespostasCheckbox] = useState<string[]>([]);
-    const location = useLocation();
+  const [respostasCheckbox, setRespostasCheckbox] = useState<string[]>([]);
+  const location = useLocation();
   const navigate = useNavigate();
 
   const [recording, setRecording] = useState(false);
   const [transcript, setTranscript] = useState('');
-    const patientName = location.state?.patientName || '';
+  const patientName = location.state?.patientName || '';
   const nurseName = location.state?.nurseName || '';
   const [startTime, setStartTime] = useState<number | null>(null);
   const [duration, setDuration] = useState<number>(0);
@@ -148,48 +148,48 @@ const [respostasCheckbox, setRespostasCheckbox] = useState<string[]>([]);
         setRecording(true);
         console.log('Gravação iniciada. Fale agora.');
       };
-const oldOnMessage = socket.onmessage;
-socket.onmessage = (event) => {
-  console.log('Mensagem do servidor:', event.data);
-  const message = event.data;
+      const oldOnMessage = socket.onmessage;
+      socket.onmessage = (event) => {
+        console.log('Mensagem do servidor:', event.data);
+        const message = event.data;
 
-  if (typeof message === 'string') {
-    try {
-      const json = JSON.parse(message);
+        if (typeof message === 'string') {
+          try {
+            const json = JSON.parse(message);
 
-      if (json.respostas && json.doencas) {
-        setRespostas(perguntasTexto.map(p => ({
-          pergunta: p,
-          resposta: json.respostas[p] || ''
-        })));
+            if (json.respostas && json.doencas) {
+              setRespostas(perguntasTexto.map(p => ({
+                pergunta: p,
+                resposta: json.respostas[p] || ''
+              })));
 
-        setRespostasCheckbox(json.doencas.map((d: string) => d.toLowerCase()));
+              setRespostasCheckbox(json.doencas.map((d: string) => d.toLowerCase()));
 
-        console.log('JSON final recebido da IA:', json);
+              console.log('JSON final recebido da IA:', json);
 
-        // Encerrar WebSocket só depois de receber o JSON
-        if (socketRef.current?.readyState === WebSocket.OPEN) {
-          socketRef.current.close();
+              // Encerrar WebSocket só depois de receber o JSON
+              if (socketRef.current?.readyState === WebSocket.OPEN) {
+                socketRef.current.close();
+              }
+
+              return;
+            }
+          } catch (e) {
+            // Não era JSON, seguir com fluxo normal
+          }
+
+          if (message.startsWith('TRANSCRIÇÃO PARCIAL:')) {
+            setTranscript(prev => prev + message.replace('TRANSCRIÇÃO PARCIAL:', '').trim() + ' ');
+          } else if (message.startsWith('FINAL:')) {
+            const textoFinal = message.replace('FINAL:', '').trim();
+            setTranscript(prev => prev + '\n[FIM]: ' + textoFinal);
+            console.log('ℹ️ Transcrição final recebida.');
+            // ⚠️ Não feche o socket aqui ainda!
+          } else {
+            setTranscript(prev => prev + '\n[INFO] ' + message);
+          }
         }
-
-        return;
-      }
-    } catch (e) {
-      // Não era JSON, seguir com fluxo normal
-    }
-
-    if (message.startsWith('TRANSCRIÇÃO PARCIAL:')) {
-      setTranscript(prev => prev + message.replace('TRANSCRIÇÃO PARCIAL:', '').trim() + ' ');
-    } else if (message.startsWith('FINAL:')) {
-      const textoFinal = message.replace('FINAL:', '').trim();
-      setTranscript(prev => prev + '\n[FIM]: ' + textoFinal);
-      console.log('ℹ️ Transcrição final recebida.');
-      // ⚠️ Não feche o socket aqui ainda!
-    } else {
-      setTranscript(prev => prev + '\n[INFO] ' + message);
-    }
-  }
-};
+      };
 
       socket.onerror = (event) => {
         console.error('Erro no WebSocket:', event);
@@ -206,40 +206,40 @@ socket.onmessage = (event) => {
       stopRecording();
     }
   };
-const stopRecording = () => {
-  if (stoppedRef.current) return;
-  stoppedRef.current = true;
+  const stopRecording = () => {
+    if (stoppedRef.current) return;
+    stoppedRef.current = true;
 
-  console.log('Parando gravação...');
-  
-  if (processorRef.current) processorRef.current.disconnect();
-  if (audioContextRef.current) audioContextRef.current.close();
-  if (streamRef.current) streamRef.current.getTracks().forEach(track => track.stop());
+    console.log('Parando gravação...');
 
-  clearInterval(intervalRef.current);
-  setRecording(false);
+    if (processorRef.current) processorRef.current.disconnect();
+    if (audioContextRef.current) audioContextRef.current.close();
+    if (streamRef.current) streamRef.current.getTracks().forEach(track => track.stop());
 
-  try {
-    if (socketRef.current?.readyState === WebSocket.OPEN) {
-      socketRef.current.send(JSON.stringify({ action: 'encerrar' }));
-      console.log('Comando "encerrar" enviado ao WebSocket');
+    clearInterval(intervalRef.current);
+    setRecording(false);
+
+    try {
+      if (socketRef.current?.readyState === WebSocket.OPEN) {
+        socketRef.current.send(JSON.stringify({ action: 'encerrar' }));
+        console.log('Comando "encerrar" enviado ao WebSocket');
+      }
+    } catch (e) {
+      console.warn(' Erro ao enviar comando encerrar:', e);
     }
-  } catch (e) {
-    console.warn(' Erro ao enviar comando encerrar:', e);
-  }
-};
-
-
-const handleCompleteAssessment = () => {
-  stopRecording();
-
-  const jsonFinal = {
-    transcript,
-    duration,
-    respostas,
-    respostasCheckbox,
-    
   };
+
+
+  const handleCompleteAssessment = () => {
+    stopRecording();
+
+    const jsonFinal = {
+      transcript,
+      duration,
+      respostas,
+      respostasCheckbox,
+
+    };
     navigate('/assessment-complete', {
       state: { jsonFinal, patientName, nurseName },
     });
