@@ -1,27 +1,26 @@
-
-import React, { useState } from 'react';
-import { Button } from '@/components/ui/button';
-import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
-import { Input } from '@/components/ui/input';
-import { Label } from '@/components/ui/label';
-import { Video, Phone, Clock, Users } from 'lucide-react';
-import { useNavigate } from 'react-router-dom';
+import React, { useState } from "react";
+import { Button } from "@/components/ui/button";
+import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
+import { Input } from "@/components/ui/input";
+import { Label } from "@/components/ui/label";
+import { Video, Phone, Clock, Users } from "lucide-react";
+import { useNavigate } from "react-router-dom";
 
 const StartCall = () => {
   const navigate = useNavigate();
   const [patientInfo, setPatientInfo] = useState({
-    name: '',
-    nameE: '',
-    position: ''
+    name: "",
+    nameE: "",
+    position: "",
   });
 
   const handleStartCall = () => {
     if (patientInfo.name && patientInfo.nameE) {
-      navigate('/video-interview', { state: { patientName: patientInfo.name, nurseName: patientInfo.nameE } });
-
+      navigate("/video-interview", {
+        state: { patientName: patientInfo.name, nurseName: patientInfo.nameE },
+      });
     }
   };
-
 
   return (
     <div className="min-h-screen bg-gradient-to-br from-blue-50 to-indigo-100 flex items-center justify-center p-4">
@@ -33,7 +32,8 @@ const StartCall = () => {
               Sistema de Avaliação de Saúde
             </h1>
             <p className="text-lg text-gray-600 mb-6">
-              Plataforma integrada para condução de entrevistas de entrada com transcrição automática e preenchimento inteligente de formulários.
+              Plataforma integrada para condução de entrevistas de entrada com
+              transcrição automática e preenchimento inteligente de formulários.
             </p>
           </div>
 
@@ -44,7 +44,9 @@ const StartCall = () => {
               </div>
               <div>
                 <h3 className="font-semibold">Vídeo chamada integrada</h3>
-                <p className="text-sm text-gray-600">Interface profissional para entrevistas</p>
+                <p className="text-sm text-gray-600">
+                  Interface profissional para entrevistas
+                </p>
               </div>
             </div>
 
@@ -54,7 +56,9 @@ const StartCall = () => {
               </div>
               <div>
                 <h3 className="font-semibold">Redução de tempo</h3>
-                <p className="text-sm text-gray-600">Eliminação da digitação manual</p>
+                <p className="text-sm text-gray-600">
+                  Eliminação da digitação manual
+                </p>
               </div>
             </div>
 
@@ -64,7 +68,9 @@ const StartCall = () => {
               </div>
               <div>
                 <h3 className="font-semibold">Fluxo otimizado</h3>
-                <p className="text-sm text-gray-600">7 etapas em formulário único</p>
+                <p className="text-sm text-gray-600">
+                  7 etapas em formulário único
+                </p>
               </div>
             </div>
           </div>
@@ -89,10 +95,11 @@ const StartCall = () => {
                 type="text"
                 placeholder="Digite o nome completo"
                 value={patientInfo.name}
-                onChange={(e) => setPatientInfo(prev => ({ ...prev, name: e.target.value }))}
+                onChange={(e) =>
+                  setPatientInfo((prev) => ({ ...prev, name: e.target.value }))
+                }
               />
             </div>
-
 
             <div className="space-y-2">
               <Label htmlFor="patientName">Nome do Enfermeiro</Label>
@@ -101,11 +108,11 @@ const StartCall = () => {
                 type="text"
                 placeholder="Digite o nome completo"
                 value={patientInfo.nameE}
-                onChange={(e) => setPatientInfo(prev => ({ ...prev, nameE: e.target.value }))}
+                onChange={(e) =>
+                  setPatientInfo((prev) => ({ ...prev, nameE: e.target.value }))
+                }
               />
             </div>
-
-
 
             <div className="pt-4">
               <Button
@@ -120,15 +127,14 @@ const StartCall = () => {
             </div>
 
             <div className="text-center text-xs text-gray-500 mt-4">
-              A chamada será automaticamente gravada para fins de qualidade e treinamento
+              A chamada será automaticamente gravada para fins de qualidade e
+              treinamento
             </div>
             <footer className="mt-8 border-t border-gray-300 pt-4 text-center text-sm text-gray-600">
               <p>© 2025 MedSênior. Todos os direitos reservados.</p>
             </footer>
-
           </CardContent>
         </Card>
-
       </div>
     </div>
   );

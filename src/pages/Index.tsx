@@ -1,6 +1,5 @@
-
-import React from 'react';
-import StartCall from '@/components/StartCall';
+import React from "react";
+import StartCall from "@/components/StartCall";
 
 const Index = () => {
   return <StartCall />;
