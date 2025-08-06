@@ -312,20 +312,6 @@ const VideoInterview = () => {
                     </p>
                   </div>
 
-                  <div className="space-y-1">
-                    <p className="text-xs text-muted-foreground">Dica 1:</p>
-                    <p className="text-sm font-medium text-primary">
-                      O sr(a) poderia me mostrar um documento com foto?
-                    </p>
-                  </div>
-
-                  <div className="space-y-1">
-                    <p className="text-xs text-muted-foreground">Dica 2:</p>
-                    <p className="text-sm font-medium text-primary">
-                      Por gentileza, poderia me falar o nome completo e a data
-                      de nascimento?
-                    </p>
-                  </div>
                 </div>
               </CardContent>
             </Card>
@@ -335,28 +321,6 @@ const VideoInterview = () => {
                 <CardTitle className="text-sm">Contatos de saúde</CardTitle>
               </CardHeader>
               <CardContent className="space-y-4">
-                <div className="space-y-1">
-                  <p className="text-xs text-muted-foreground">Dica 1:</p>
-                  <p className="text-sm font-medium text-primary">
-                    Registrar o contato telefônico principal do beneficiário.
-                  </p>
-                </div>
-
-                <div className="space-y-1">
-                  <p className="text-xs text-muted-foreground">Dica 2:</p>
-                  <p className="text-sm font-medium text-primary">
-                    Em caso de ausência desse contato, registrar o número da
-                    pessoa que o acompanha diariamente.
-                  </p>
-                </div>
-
-                <div className="space-y-1">
-                  <p className="text-xs text-muted-foreground">Dica 3:</p>
-                  <p className="text-sm font-medium text-primary">
-                    Seus dados serão utilizados para fins de acompanhamento
-                    assistencial da saúde na MedSênior.
-                  </p>
-                </div>
 
                 <div className="space-y-2">
                   <div>
@@ -569,7 +533,7 @@ const VideoInterview = () => {
                 </div>
               </CardContent>
             </Card>
-            <Card>
+           {/*} <Card>
               <CardHeader className="pb-2">
                 <CardTitle className="text-sm font-semibold text-gray-900 flex items-center gap-2">
                   <svg
@@ -631,7 +595,7 @@ const VideoInterview = () => {
                   </Label>
                 </section>
               </CardContent>
-            </Card>
+            </Card>*/}
           </div>
         </ScrollArea>
         <div className="w-full flex justify-center px-6 pb-6 pt-4">
